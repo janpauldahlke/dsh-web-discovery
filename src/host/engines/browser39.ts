@@ -189,6 +189,19 @@ export function createBrowser39Engine(opts: Browser39EngineOptions): DiscoveryEn
       if (page === null || typeof page !== 'object') {
         throw new DiscoveryEngineError('browser39_failed', 'browser39 search returned a non-object reply')
       }
+      // The CLI's own structured status (the upstream engine's HTTP response).
+      // A block — notably DDG's bot-challenge page, which answers HTTP 202
+      // ("select all squares containing a duck", no result links) — must be a
+      // loud failure so the tool layer falls through / reports no_engine,
+      // never a silent 0-hit success. (We read the CLI's status field, not
+      // the HTML.)
+      const status = typeof page.status === 'number' ? page.status : 200
+      if (status === 202 || status < 200 || status >= 300) {
+        throw new DiscoveryEngineError(
+          'browser39_blocked',
+          `browser39 search blocked by the search engine (HTTP ${status} — bot challenge or rate limit); retry later or use another engine`,
+        )
+      }
       return mapSerpPage(page, limit)
     },
   }

@@ -47,6 +47,10 @@ export type DiscoveryErrorCode =
   | 'browser39_missing'
   /** browser39 binary exists but the search failed (network, engine error) — NOT no_engine. */
   | 'browser39_failed'
+  /** The search engine blocked the request (e.g. DDG bot challenge — the CLI
+   *  reports HTTP 202 with no results). Engine-availability failure → maps to
+   *  no_engine at the tool layer (fall through / next engine), not search_failed. */
+  | 'browser39_blocked'
 
 /** Engine-level failure with a stable code (never thrown into the tool layer
  *  unrendered — the tool maps it to the `{ ok: false, error }` contract). */

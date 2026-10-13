@@ -40,6 +40,8 @@ function engineReason(kind: DiscoveryEngineKind, error: DiscoveryEngineError): s
       return 'searxng not running at the configured endpoint'
     case 'browser39_missing':
       return 'browser39 search binary not found'
+    case 'browser39_blocked':
+      return 'browser39 blocked by the search engine (bot challenge / rate limit)'
     default:
       return `${kind} engine error (${error.code})`
   }
@@ -64,8 +66,9 @@ export async function runDiscoverySearch(
     return {
       ok: false,
       error:
-        'no_engine: no discovery engine available ' +
-        '(searxng endpoint not configured; browser39 search not configured)',
+        'no_engine: no discovery engines configured ' +
+        '(searxng endpoint not configured; browser39 search not configured) ' +
+        '— missing discovery is a supported state; supply URLs directly (fixtures or manual)',
     }
   }
 
@@ -84,7 +87,7 @@ export async function runDiscoverySearch(
     } catch (error) {
       if (
         error instanceof DiscoveryEngineError &&
-        (error.code === 'searxng_unreachable' || error.code === 'browser39_missing')
+        (error.code === 'searxng_unreachable' || error.code === 'browser39_missing' || error.code === 'browser39_blocked')
       ) {
         failures.push(engineReason(engine.kind, error))
         continue

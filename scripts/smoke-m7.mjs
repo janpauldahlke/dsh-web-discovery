@@ -6,6 +6,8 @@
 //     reply shape (fetch-shaped SERP page; DDG /l/?uddg= wrappers)
 //   - no_engine contract (D-M7.3): supported state, combined reasons,
 //     auto-fallback, pinned-engine semantics, search_failed vs no_engine
+//     (incl. browser39_blocked: bot challenge / non-2xx → availability
+//     failure, never a silent 0-hit success)
 //   - config (defaults / file / env override / corrupt / disabled)
 //   - discovery store (discovery.json record/dedup/corrupt)
 // Exit 0 iff every check passes. Mirrors the web-missions smoke family.
@@ -167,6 +169,34 @@ const fakeRunner = (page = SERP_PAGE, over = {}) => async (bin, args) => ({
   check('browser39: non-JSON stdout → browser39_failed', code === 'browser39_failed', code)
 }
 {
+  // DDG bot challenge (probed live 2026-10-13): HTTP 202 (a 2xx!),
+  // chrome-only links. Must be a block (→ no_engine at the tool layer),
+  // never a silent 0-hit success.
+  const CHALLENGE_PAGE = {
+    url: 'https://html.duckduckgo.com/html/?q=q',
+    title: 'DuckDuckGo',
+    status: 202,
+    markdown: 'Unfortunately, bots use DuckDuckGo too. Select all squares containing a duck',
+    links: [{ i: 0, text: 'DuckDuckGo', href: '/html/' }],
+  }
+  const eng = createBrowser39Engine({ bin: 'b39', runner: fakeRunner(CHALLENGE_PAGE) })
+  let code = null, msg = null
+  try { await eng.search('q') } catch (e) { code = e.code; msg = e.message }
+  check('browser39: HTTP 202 bot challenge → browser39_blocked (not a 0-hit success)', code === 'browser39_blocked' && /202/.test(msg), code + ' ' + msg)
+}
+{
+  const eng = createBrowser39Engine({ bin: 'b39', runner: fakeRunner({ links: [], status: 429 }) })
+  let code = null
+  try { await eng.search('q') } catch (e) { code = e.code }
+  check('browser39: any non-2xx status → browser39_blocked', code === 'browser39_blocked', code)
+}
+{
+  // status missing (non-DDG replies) → legacy behavior (map the links)
+  const eng = createBrowser39Engine({ bin: 'b39', runner: fakeRunner({ links: [{ i: 1, text: 'T', href: 'https://a.example/' }] }) })
+  const hits = await eng.search('q')
+  check('browser39: missing status → treated as 200 (links mapped)', hits.length === 1 && hits[0].url === 'https://a.example/', J(hits))
+}
+{
   const eng = createBrowser39Engine({ bin: '/nonexistent/b39', runner: fakeRunner(SERP_PAGE, { code: -1, stdout: '', stderr: 'spawn /nonexistent/b39 ENOENT', spawnError: 'ENOENT' }) })
   let code = null
   try { await eng.search('q') } catch (e) { code = e.code }
@@ -195,7 +225,8 @@ const deadSxr = createSearxngEngine({ endpoint: 'http://127.0.0.1:1/searxng', ti
 const missingB39 = createBrowser39Engine({ bin: 'nope', runner: fakeRunner(SERP_PAGE, { code: -1, stdout: '', stderr: 'spawn nope ENOENT', spawnError: 'ENOENT' }) })
 {
   const r = await runDiscoverySearch({ engines: {} }, 'q')
-  check('no_engine: no engines configured', r.ok === false && r.error.startsWith('no_engine:'), J(r))
+  check('no_engine: no engines configured (both named)', r.ok === false && r.error.startsWith('no_engine:') && /searxng/.test(r.error) && /browser39/.test(r.error), J(r.error))
+  check('no_engine: hints the supported fallback (fixtures/manual)', /fixtures|manual|directly/i.test(r.error), J(r.error))
 }
 {
   const r = await runDiscoverySearch({ engines: { searxng: deadSxr, browser39: missingB39 } }, 'q')
@@ -213,6 +244,16 @@ const missingB39 = createBrowser39Engine({ bin: 'nope', runner: fakeRunner(SERP_
   const failedB39 = createBrowser39Engine({ bin: 'b39', runner: fakeRunner(null, { code: 1, stderr: 'boom' }) })
   const r = await runDiscoverySearch({ engines: { browser39: failedB39 } }, 'q', { engine: 'browser39' })
   check('pinned present-but-failing → search_failed (not no_engine)', r.ok === false && r.error.startsWith('search_failed:'), J(r.error))
+}
+{
+  // blocked = engine-availability failure → no_engine (auto falls through;
+  // pinned names it) — distinct from a query failure (search_failed).
+  const CHALLENGE_PAGE = { url: 'u', title: 't', status: 202, links: [] }
+  const blockedB39 = createBrowser39Engine({ bin: 'b39', runner: fakeRunner(CHALLENGE_PAGE) })
+  const rAuto = await runDiscoverySearch({ engines: { searxng: deadSxr, browser39: blockedB39 } }, 'q')
+  check('auto: searxng dead + browser39 blocked → no_engine naming the block', rAuto.ok === false && rAuto.error.startsWith('no_engine:') && /blocked/.test(rAuto.error), J(rAuto.error))
+  const rPinned = await runDiscoverySearch({ engines: { browser39: blockedB39 } }, 'q', { engine: 'browser39' })
+  check('pinned browser39 blocked → no_engine naming browser39 (not search_failed)', rPinned.ok === false && rPinned.error.startsWith('no_engine:') && /browser39/.test(rPinned.error), J(rPinned.error))
 }
 {
   const r = await runDiscoverySearch({ engines: { searxng: deadSxr, browser39: goodB39 } }, '   ')
