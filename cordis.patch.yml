@@ -1,0 +1,6 @@
+# dsh-local-web-discovery layer: one Loader row for the companion package.
+# Host half = package root export (lib/index.js); the client face is a no-op
+# stub (M7 companion is tool-only) kept for C9 shape parity with the siblings.
+- insert:
+    - id: dsh-local-web-discovery
+      name: dsh-local-web-discovery
