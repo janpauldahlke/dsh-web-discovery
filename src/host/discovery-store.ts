@@ -47,7 +47,7 @@ export interface DiscoveryFile {
 
 export class DiscoveryStoreError extends Error {
   constructor(
-    readonly code: 'unknown_mission' | 'discovery_corrupt' | 'discovery_unwritable',
+    readonly code: 'unknown_mission' | 'discovery_corrupt' | 'discovery_unwritable' | 'bad_provenance',
     message: string,
   ) {
     super(message)
@@ -94,15 +94,22 @@ export function recordDiscovery(
   hits: DiscoveryHit[],
   via: DiscoveryProvenance,
 ): DiscoveryFile {
-  const file = readDiscoveryFile(missionDir) ?? { updated_at: via.at, urls: [] }
+  // `updated_at` must always land as a string: the core REJECTS a discovery
+  // file without one (fail loud), so a missing `via.at` falls back to now
+  // (the record moment) instead of writing a file the core cannot read.
+  const at = via.at ?? new Date().toISOString()
+  if (typeof at !== 'string' || at.length === 0) {
+    throw new DiscoveryStoreError('bad_provenance', `via.at must be an ISO timestamp string (got ${String(via.at)})`)
+  }
+  const file = readDiscoveryFile(missionDir) ?? { updated_at: at, urls: [] }
   const seen = new Set(file.urls.map((u) => u.url.toLowerCase()))
   for (const hit of hits) {
     const key = hit.url.toLowerCase()
     if (seen.has(key)) continue
     seen.add(key)
-    file.urls.push({ ...hit, via })
+    file.urls.push({ ...hit, via: { ...via, at } })
   }
-  file.updated_at = via.at
+  file.updated_at = at
   const path = discoveryPath(missionDir)
   const tmp = `${path}.tmp-${process.pid}`
   mkdirSync(dirname(path), { recursive: true })

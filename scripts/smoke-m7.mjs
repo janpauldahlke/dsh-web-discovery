@@ -269,7 +269,7 @@ const via1 = { query: 'rust web framework', engine: 'browser39', at: '2026-10-13
     { url: 'https://one.example/a', title: 'Result One' },
     { url: 'https://two.example/b?ref=x' },
   ], via1)
-  check('store: record writes entries with provenance', file.updated_at === via1.at && file.urls.length === 2 && file.urls[0].via === via1 && file.urls[0].title === 'Result One', J(file))
+  check('store: record writes entries with provenance', file.updated_at === via1.at && file.urls.length === 2 && file.urls[0].via.query === via1.query && file.urls[0].via.engine === via1.engine && file.urls[0].via.at === via1.at && file.urls[0].title === 'Result One', J(file))
   check('store: file on disk with discovery.json name', existsSync(discoveryPath(missionDir)) && JSON.parse(readFileSync(discoveryPath(missionDir), 'utf8')).urls.length === 2)
 }
 {
@@ -280,6 +280,15 @@ const via1 = { query: 'rust web framework', engine: 'browser39', at: '2026-10-13
   ], via2)
   check('store: dedup keeps first-seen provenance', file.urls.length === 3 && file.urls[0].via.query === via1.query, J(file.urls.map((u) => ({ url: u.url, q: u.via.query }))))
   check('store: updated_at refreshed', file.updated_at === via2.at)
+}
+{
+  // missing via.at → falls back to now (never writes a file the core rejects)
+  const file = recordDiscovery(missionDir, [
+    { url: 'https://fallback.example/' },
+  ], { query: 'no at given', engine: 'browser39', at: undefined })
+  const before = new Date(Date.now() + 5000).toISOString()
+  check('store: missing via.at → updated_at falls back to now (valid ISO)', typeof file.updated_at === 'string' && !Number.isNaN(Date.parse(file.updated_at)) && file.updated_at <= before, file.updated_at)
+  check('store: entry via.at normalized to the fallback', file.urls.find((u) => u.url === 'https://fallback.example/')?.via.at === file.updated_at, J(file.urls))
 }
 {
   writeFileSync(discoveryPath(missionDir), '{broken')
