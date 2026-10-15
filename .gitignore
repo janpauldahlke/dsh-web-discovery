@@ -13,3 +13,8 @@ dist/
 
 # Long-horizon vault (generated; see dsh-local-long-horizon)
 STATUS.md
+
+
+#operator
+operator/
+agent/

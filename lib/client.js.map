@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": ["../src/client/index.ts"],
-  "sourcesContent": ["/**\n * Browser half: intentional no-op. The M7 companion is tool-only (no pane).\n * Cordis still requires `name` + `apply` on every loaded plugin face \u2014\n * `export {}` alone \u2192 \"invalid plugin, expect \u2026 apply method\".\n */\nexport const name = 'dsh-local-web-discovery'\n\nexport function apply(_ctx: unknown): void {\n  // no UI \u2014 host tools only\n}\n"],
+  "sourcesContent": ["/**\n * Browser half: intentional no-op. The M7 companion is tool-only (no pane).\n * Cordis still requires `name` + `apply` on every loaded plugin face \u2014\n * `export {}` alone \u2192 \"invalid plugin, expect \u2026 apply method\".\n */\nexport const name = 'dsh-web-discovery'\n\nexport function apply(_ctx: unknown): void {\n  // no UI \u2014 host tools only\n}\n"],
   "mappings": ";;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAKO,IAAM,OAAO;AAEb,SAAS,MAAM,MAAqB;AAE3C;",
   "names": []
 }

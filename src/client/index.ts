@@ -3,7 +3,7 @@
  * Cordis still requires `name` + `apply` on every loaded plugin face —
  * `export {}` alone → "invalid plugin, expect … apply method".
  */
-export const name = 'dsh-local-web-discovery'
+export const name = 'dsh-web-discovery'
 
 export function apply(_ctx: unknown): void {
   // no UI — host tools only

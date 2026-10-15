@@ -1,4 +1,4 @@
-// M7 7.1 smoke — dsh-local-web-discovery companion core, hermetic (no
+// M7 7.1 smoke — dsh-web-discovery companion core, hermetic (no
 // network, no containers):
 //   - SearXNG engine vs a local stub speaking the REAL SearXNG JSON API
 //     (GET /search?q=…&format=json → { results: [{url,title,content,…}] })

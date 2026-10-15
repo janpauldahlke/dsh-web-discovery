@@ -1,5 +1,5 @@
 /**
- * Host half of dsh-local-web-discovery (the M7 companion to dsh-local-web-missions).
+ * Host half of dsh-web-discovery (the M7 companion to dsh-web-missions).
  *
  * - `inject: ['tools']` — tool-only companion: `discovery_search` must work
  *   in headless agent sessions (no web face; the client stub is no-op for

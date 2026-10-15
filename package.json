@@ -1,7 +1,7 @@
 {
-  "name": "dsh-local-web-discovery",
+  "name": "dsh-web-discovery",
   "version": "1.0.0",
-  "description": "Discovery companion for dsh-local-web-missions: local search engines (SearXNG HTTP JSON + browser39 search CLI) behind a DiscoveryPort — the mission core only sees URLs in / URLs out.",
+  "description": "Discovery companion for dsh-web-missions: local search engines (SearXNG HTTP JSON + browser39 search CLI) behind a DiscoveryPort — the mission core only sees URLs in / URLs out.",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -27,7 +27,7 @@
     "build": "node build.mjs && tsc --noEmit",
     "smoke": "node build.mjs && node scripts/smoke-m7.mjs",
     "test": "node scripts/smoke-m7.mjs",
-    "prepare": "node build.mjs || node -e \"console.warn('[dsh-local-web-discovery] prepare: build skipped (build toolchain unavailable); relying on prebuilt lib/')\""
+    "prepare": "node build.mjs"
   },
   "keywords": [
     "dsh-plugin",
@@ -53,12 +53,13 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "dsh-build-tools": "^0.2.0",
     "esbuild": "^0.25.0",
     "typescript": "^5.6.0"
   },
   "author": {
     "name": "Jan (HagbardCeline)",
-    "email": "jandareal@gmail.com"
+    "email": "janpauldahlke@gmail.com"
   },
   "license": "MIT",
   "engines": {

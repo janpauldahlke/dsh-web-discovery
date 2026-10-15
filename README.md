@@ -1,7 +1,7 @@
-# dsh-local-web-discovery
+# dsh-web-discovery
 
-Discovery companion for **[`dsh-local-web-missions`](https://github.com/janpauldahlke/dsh-web-missions)**
-(npm: `dsh-local-web-missions`). Happy-path opener for web research missions:
+Discovery companion for **[`dsh-web-missions`](https://github.com/janpauldahlke/dsh-web-missions)**
+(npm: `dsh-web-missions`). Happy-path opener for web research missions:
 the model gets candidate URLs from **local** search engines, encapsulated in
 their own package — the mission core only sees **URLs in / URLs out**.
 
