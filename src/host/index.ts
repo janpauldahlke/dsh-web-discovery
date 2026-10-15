@@ -26,7 +26,9 @@ function errorMessage(error: unknown): string {
 export function apply(ctx: Context): void {
   try {
     const disposeTools = registerDiscoveryTools(ctx)
-    ctx.effect(() => { disposeTools() }, 'web-discovery: tools')
+    // Cordis: return the disposer — calling disposeTools() here unregisters
+    // discovery_search immediately on apply (same scar as web-missions).
+    ctx.effect(() => disposeTools, 'web-discovery: tools')
   } catch (error) {
     ctx.logger?.(PLUGIN).warn('tool registration failed (continuing without it): %s', errorMessage(error))
   }

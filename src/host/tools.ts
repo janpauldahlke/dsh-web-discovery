@@ -156,7 +156,8 @@ export function registerDiscoveryTools(ctx: Context): () => void {
       if (!result.ok) return result
 
       if (!args.mission_id || !args.mission_id.trim()) {
-        return { ok: true, query: result.query, engine: result.engine, count: result.count, urls: result.urls, recorded: null }
+        // Omit `recorded` when not writing (avoid null vs string schema scars).
+        return { ok: true, query: result.query, engine: result.engine, count: result.count, urls: result.urls }
       }
       const missionDir = join(cwd, MISSION_STORE_DIR, args.mission_id.trim())
       if (!existsSync(missionDir)) {
