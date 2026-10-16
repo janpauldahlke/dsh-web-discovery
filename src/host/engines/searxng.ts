@@ -18,7 +18,7 @@
  * Pure: the fetch implementation is injected (the smoke drives a local
  * stub speaking the real API shape — no network, no container).
  */
-import { DiscoveryEngineError, type DiscoveryEngine, type DiscoveryHit, type SearchOptions } from '../discovery-port.ts'
+import { DEFAULT_LIMIT, DiscoveryEngineError, type DiscoveryEngine, type DiscoveryHit, type SearchOptions } from '../discovery-port.ts'
 
 export interface SearxngEngineOptions {
   /** Instance base incl. path prefix, e.g. `http://127.0.0.1:8888/searxng`. */
@@ -30,7 +30,6 @@ export interface SearxngEngineOptions {
 }
 
 const DEFAULT_TIMEOUT_MS = 10_000
-const DEFAULT_LIMIT = 10
 
 interface SearxngResultRow {
   url?: unknown

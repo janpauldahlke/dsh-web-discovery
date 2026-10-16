@@ -17,8 +17,10 @@
  * absent engine.
  */
 import {
+  DEFAULT_LIMIT,
   DISCOVERY_ENGINES,
   DiscoveryEngineError,
+  MAX_LIMIT,
   type DiscoveryEngine,
   type DiscoveryEngineKind,
   type DiscoveryHit,
@@ -33,6 +35,14 @@ export interface DiscoveryToolDeps {
 export type DiscoveryToolResult =
   | { ok: true; query: string; engine: DiscoveryEngineKind; count: number; urls: DiscoveryHit[] }
   | { ok: false; error: string }
+
+/** Normalize a caller-supplied `limit`: default `DEFAULT_LIMIT`, rounded,
+ *  clamped to 1..`MAX_LIMIT`, non-finite → default. The tool layer and the
+ *  core share this so the schema text and the behaviour can't drift. */
+export function clampLimit(limit: unknown): number {
+  if (typeof limit !== 'number' || !Number.isFinite(limit)) return DEFAULT_LIMIT
+  return Math.min(MAX_LIMIT, Math.max(1, Math.round(limit)))
+}
 
 function engineReason(kind: DiscoveryEngineKind, error: DiscoveryEngineError): string {
   switch (error.code) {
@@ -56,7 +66,7 @@ export async function runDiscoverySearch(
   if (!query) {
     return { ok: false, error: 'query_required: pass a non-empty search query' }
   }
-  const limit = opts.limit ?? 10
+  const limit = clampLimit(opts.limit)
 
   const candidates: DiscoveryEngineKind[] = opts.engine
     ? [opts.engine]

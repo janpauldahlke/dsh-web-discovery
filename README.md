@@ -5,7 +5,7 @@ Discovery companion for **[`dsh-web-missions`](https://github.com/janpauldahlke/
 the model gets candidate URLs from **local** search engines, encapsulated in
 their own package — the mission core only sees **URLs in / URLs out**.
 
-Agent/dev handover: see **`HANDOVER.md`**. Publish/curate this package on npm
+Agent/dev handover: see **`agent/CONTEXT.md`**. Publish/curate this package on npm
 and pin the profile to a known-good version alongside missions.
 
 Two engines, both local, both optional (D-M7.2):

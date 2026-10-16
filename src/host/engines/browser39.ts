@@ -33,6 +33,7 @@
  */
 import { execFile } from 'node:child_process'
 import {
+  DEFAULT_LIMIT,
   DiscoveryEngineError,
   type DiscoveryEngine,
   type DiscoveryHit,
@@ -78,7 +79,6 @@ export function defaultRunner(timeoutMs: number): Browser39Runner {
 }
 
 const DEFAULT_TIMEOUT_MS = 30_000
-const DEFAULT_LIMIT = 10
 const SERP_CHROME_HOST = 'duckduckgo.com'
 
 export interface Browser39EngineOptions {

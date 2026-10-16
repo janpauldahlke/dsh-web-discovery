@@ -1,5 +1,7 @@
 # FABLE 5 — Rubberduck: discovery loop, time budget, categorizer vs subagent
 
+> **⚠️ ANSWERED 2026-10-16 — historical only.** This was the question sheet for the expensive-model session; the verdict lives in [`../DECISIONS.md`](../DECISIONS.md) (same-loop law kept, architecture A + optional in-tool categorizer B, never C; preview/scan cut; budgets in §2; kill criteria in §9). Kept to show *why* the decisions look the way they do.
+
 **For:** expensive-model session (operator logs into the good-token account).  
 **Repo:** `~/dev/dsh-web-discovery` · sibling `~/dev/dsh-web-missions`  
 **Related:** [`P0.5.md`](./P0.5.md) (implementation board) · [`HANDOVER.md`](./HANDOVER.md) (cold context)  

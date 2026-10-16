@@ -20,7 +20,7 @@ const core = await import('../lib/discovery.mjs')
 const {
   createSearxngEngine, mapSearxngRow,
   createBrowser39Engine, unwrapSerpHref, mapSerpPage,
-  runDiscoverySearch,
+  runDiscoverySearch, clampLimit, DEFAULT_LIMIT, MAX_LIMIT,
   readDiscoveryConfig, enginesForConfig, DiscoveryConfigError, DEFAULT_CONFIG,
   readDiscoveryFile, recordDiscovery, discoveryPath, DiscoveryStoreError,
   DiscoveryEngineError,
@@ -264,6 +264,20 @@ const missingB39 = createBrowser39Engine({ bin: 'nope', runner: fakeRunner(SERP_
   const r = await runDiscoverySearch({ engines: { searxng: createSearxngEngine({ endpoint: sxrEndpoint }), browser39: goodB39 } }, 'q', { limit: 1 })
   check('auto: searxng alive wins first (limit 1)', r.ok === true && r.engine === 'searxng' && r.urls[0].url === 'https://alpha.example/one', J(r.ok ? { engine: r.engine, first: r.urls[0]?.url } : r.error))
   void sxrHits
+}
+
+// --- limit default / clamp (DECISIONS §2: default 5, ceiling 50) ---------------
+{
+  check('limit: DEFAULT_LIMIT is 5', DEFAULT_LIMIT === 5, J(DEFAULT_LIMIT))
+  check('limit: MAX_LIMIT is 50', MAX_LIMIT === 50, J(MAX_LIMIT))
+  check('limit: clampLimit(undefined) → default', clampLimit(undefined) === DEFAULT_LIMIT, J(clampLimit(undefined)))
+  check('limit: clampLimit(NaN) → default', clampLimit(Number.NaN) === DEFAULT_LIMIT, J(clampLimit(Number.NaN)))
+  check('limit: clampLimit(0) → 1', clampLimit(0) === 1, J(clampLimit(0)))
+  check('limit: clampLimit(-3) → 1', clampLimit(-3) === 1, J(clampLimit(-3)))
+  check('limit: clampLimit(999) → 50', clampLimit(999) === MAX_LIMIT, J(clampLimit(999)))
+  check('limit: clampLimit(2.6) rounds → 3', clampLimit(2.6) === 3, J(clampLimit(2.6)))
+  const r = await runDiscoverySearch({ engines: { searxng: createSearxngEngine({ endpoint: sxrEndpoint }) } }, 'q')
+  check('limit: search without limit caps at DEFAULT_LIMIT', r.ok === true && r.urls.length <= DEFAULT_LIMIT, J(r.ok ? r.urls.length : r.error))
 }
 
 // --- config --------------------------------------------------------------------

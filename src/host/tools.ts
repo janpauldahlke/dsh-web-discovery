@@ -28,11 +28,13 @@ import { createBrowser39Engine } from './engines/browser39.ts'
 import { createSearxngEngine } from './engines/searxng.ts'
 import { DiscoveryStoreError, recordDiscovery } from './discovery-store.ts'
 import {
+  DEFAULT_LIMIT,
   DISCOVERY_ENGINES,
+  MAX_LIMIT,
   type DiscoveryEngine,
   type DiscoveryEngineKind,
 } from './discovery-port.ts'
-import { runDiscoverySearch } from './discovery-tool.ts'
+import { clampLimit, runDiscoverySearch } from './discovery-tool.ts'
 
 /** The mission store root under cwd — the file convention the core surfaces
  *  (discovery.json in the mission dir). Documented coupling: if the core
@@ -94,7 +96,7 @@ export function registerDiscoveryTools(ctx: Context): () => void {
           enum: [...DISCOVERY_ENGINES],
           description: 'Pin one engine; omit to auto-select (searxng first, then browser39).',
         },
-        limit: { type: 'number', description: 'Max results (default 10, clamped to 1..50).' },
+        limit: { type: 'number', description: `Max results (default ${DEFAULT_LIMIT}, clamped to 1..${MAX_LIMIT}).` },
         mission_id: {
           type: 'string',
           description:
@@ -139,10 +141,7 @@ export function registerDiscoveryTools(ctx: Context): () => void {
       } catch (error) {
         return { ok: false, error: error instanceof Error ? error.message : String(error) }
       }
-      const limit =
-        typeof args.limit === 'number' && Number.isFinite(args.limit)
-          ? Math.min(50, Math.max(1, Math.round(args.limit)))
-          : 10
+      const limit = clampLimit(args.limit)
       let result
       try {
         const engines = buildEngines(cwd)

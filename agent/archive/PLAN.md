@@ -1,5 +1,7 @@
 # PLAN — dsh-web-discovery
 
+> **⚠️ SUPERSEDED 2026-10-16 — historical only.** Replaced by [`../PHASES.md`](../PHASES.md) (index) + [`../DECISIONS.md`](../DECISIONS.md) (verdict). The phase table below drifted (P_00 became DECISIONS; P_03/P_05 scopes changed).
+
 **Goal:** missions stops guessing URLs. Discovery is a thin, local-first opener inside the same agent loop: real SERP URLs → compact triaged table → `mission_fetch`.
 **Decisions:** [`P_00.md`](./P_00.md) (Fable 5 verdict). Older context: [`P0.5.md`](./P0.5.md) (superseded where P_00 disagrees), [`HANDOVER.md`](./HANDOVER.md).
 

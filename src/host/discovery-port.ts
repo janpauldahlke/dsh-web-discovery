@@ -19,8 +19,16 @@ export type DiscoveryEngineKind = 'searxng' | 'browser39'
 
 export const DISCOVERY_ENGINES: readonly DiscoveryEngineKind[] = ['searxng', 'browser39']
 
+/** Default results per search (DECISIONS §2: 5 — the main model judges a small
+ *  table nearly for free, and every extra row is token tax in the receipt).
+ *  Single source of truth: the tool layer, both engines and the tool schema
+ *  description all read this. Raise per call via `limit` (clamped 1..50). */
+export const DEFAULT_LIMIT = 5
+/** Hard ceiling for a caller-supplied `limit`. */
+export const MAX_LIMIT = 50
+
 export interface SearchOptions {
-  /** Max results to return (default 10). */
+  /** Max results to return (default DEFAULT_LIMIT). */
   limit?: number
   /** Pin one engine; absent = auto (try searxng, then browser39). */
   engine?: DiscoveryEngineKind

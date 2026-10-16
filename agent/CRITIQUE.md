@@ -1,6 +1,6 @@
 # CRITIQUE — negative dialectic on the plan
 
-The plan argued against itself. Each item has the weakness, why it hurts, and the mitigation (or "accepted").
+**Critiques the decisions now locked in [`DECISIONS.md`](./DECISIONS.md)** (written against the former `P_00` draft; mitigations were folded into the verdict and the phase files). Each item has the weakness, why it hurts, and the mitigation (or "accepted").
 
 ## Where the plan is weak
 

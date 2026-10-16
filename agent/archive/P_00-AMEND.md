@@ -1,5 +1,7 @@
 # P_00-AMEND — Decisions added after the first P_00 draft
 
+> **⚠️ MERGED 2026-10-16 — historical only.** These amendments are folded inline into [`../DECISIONS.md`](../DECISIONS.md) (A1 → §10, A2 → §4, A3 → §11, A4 → §6, A5 → §9). Kept for provenance.
+
 **Status:** authoritative. Where this file and [`P_00.md`](./P_00.md) disagree, **this file wins**.
 **Index:** [`PHASES.md`](./PHASES.md) · **Critique:** [`CRITIQUE.md`](./CRITIQUE.md) · **Next:** [`NEXT.md`](./NEXT.md)
 

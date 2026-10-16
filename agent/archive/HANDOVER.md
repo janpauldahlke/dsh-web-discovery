@@ -1,5 +1,9 @@
 # HANDOVER — `dsh-web-discovery` (archive / cold context)
 
+> **⚠️ SUPERSEDED 2026-10-16 — historical only, do not implement from this file.**
+> Current chain: [`../CONTEXT.md`](../CONTEXT.md) → [`../PHASES.md`](../PHASES.md) → [`../DECISIONS.md`](../DECISIONS.md).
+> Stale claims below: P0 packaging "to do" (it's done + npm 1.0.0 shipped), "no GitHub remote" (it exists), YaCy/3-engine plan (YaCy dropped), preview/scan verbs (cut from v0). Internal links may point at moved files.
+
 **Living board:** [`P0.5.md`](./P0.5.md)  
 **Blocking architecture rubberduck (expensive model / Fable 5):** [`FABLE-5-discovery-loop.md`](./FABLE-5-discovery-loop.md)
 

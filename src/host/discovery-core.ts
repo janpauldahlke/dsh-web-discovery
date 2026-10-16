@@ -5,8 +5,10 @@
  * (endpoint-health latch/metrics pattern).
  */
 export {
+  DEFAULT_LIMIT,
   DISCOVERY_ENGINES,
   DiscoveryEngineError,
+  MAX_LIMIT,
 } from './discovery-port.ts'
 export type {
   DiscoveryEngine,
@@ -27,7 +29,7 @@ export {
 } from './engines/browser39.ts'
 export type { Browser39CliResult, Browser39EngineOptions, Browser39Runner } from './engines/browser39.ts'
 
-export { runDiscoverySearch } from './discovery-tool.ts'
+export { clampLimit, runDiscoverySearch } from './discovery-tool.ts'
 export type { DiscoveryToolDeps, DiscoveryToolResult } from './discovery-tool.ts'
 
 export {
